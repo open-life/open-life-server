@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using open_life_server.V1.Goals.HabitGoals;
 using open_life_server.V1.Goals.ListGoals;
 using open_life_server.V1.Goals.NumberGoals;
@@ -11,6 +7,15 @@ namespace open_life_server.V1.Goals
 {
     public class GoalsContext : DbContext
     {
+        public GoalsContext(DbContextOptions options) : base(options) { }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<HabitGoal>().HasMany(h => h.Logs);
+            modelBuilder.Entity<ListGoal>().HasMany(l => l.Items);
+            modelBuilder.Entity<NumberGoal>().HasMany(n => n.Logs);
+        }
+
         public DbSet<HabitGoal> HabitGoals { get; set; }
         public DbSet<HabitLog> HabitLogs { get; set; }
 
@@ -19,10 +24,5 @@ namespace open_life_server.V1.Goals
 
         public DbSet<NumberGoal> NumberGoals { get; set; }
         public DbSet<NumberLog> NumberLogs { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlite("Data Source=goals.db");
-        }
     }
 }

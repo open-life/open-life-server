@@ -8,47 +8,56 @@ namespace open_life_server.V1.Goals.HabitGoals
     [ApiController]
     public class HabitGoalController : ControllerBase
     {
+        private readonly GoalsContext _context;
+
+        public HabitGoalController(GoalsContext context)
+        {
+            _context = context;
+        }
+
         // GET: api/HabitGoal
         [HttpGet]
         public IEnumerable<HabitGoal> Get()
         {
-            using (var db = new GoalsContext())
-            {
-                return db.HabitGoals.ToList();
-            }
+            return _context.HabitGoals.ToList();
         }
 
         // GET: api/HabitGoal/5
         [HttpGet("{id}")]
         public HabitGoal Get(int id)
         {
-            using (var db = new GoalsContext())
-            {
-                return db.HabitGoals.FirstOrDefault(g => g.HabitGoalId == id);
-            }
+            return _context.HabitGoals.Find(id);
         }
 
         // POST: api/HabitGoal
         [HttpPost]
         public void Post([FromBody] HabitGoal value)
         {
-            using (var db = new GoalsContext())
-            {
-                db.HabitGoals.Add(value);
-                db.SaveChanges();
-            }
+            _context.HabitGoals.Add(value);
+            _context.SaveChanges();
         }
 
         // PUT: api/HabitGoal/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put([FromRoute] int id, [FromBody] HabitGoal value)
         {
+            var habitToUpdate = _context.HabitGoals.Find(id);
+
+            habitToUpdate.Name = value.Name;
+            habitToUpdate.Logs = value.Logs;
+            habitToUpdate.Target = value.Target;
+
+            _context.HabitGoals.Update(habitToUpdate);
+            _context.SaveChanges();
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            var habitToDelete = _context.HabitGoals.Find(id);
+            _context.HabitGoals.Remove(habitToDelete);
+            _context.SaveChanges();
         }
     }
 }

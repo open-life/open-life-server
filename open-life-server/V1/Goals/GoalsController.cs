@@ -11,36 +11,38 @@ namespace open_life_server.V1.Goals
     [ApiController]
     public class GoalsController : ControllerBase
     {
+        private readonly GoalsContext _context;
+
+        public GoalsController(GoalsContext context)
+        {
+            _context = context;
+        }
+
         // GET: api/Goals
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<GoalOverview> Get()
         {
-            return new string[] { "value1", "value2" };
-        }
+            var result = new List<GoalOverview>();
 
-        // GET: api/Goals/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+            var habits = _context.HabitGoals.ToList();
+            foreach (var habit in habits)
+            {
+                result.Add(new GoalOverview{Name = habit.Name, Progress = $"{(habit.Logs.Count(l => l.HabitCompleted) / habit.Target) * 100}%"});
+            }
 
-        // POST: api/Goals
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+            var lists = _context.ListGoals.ToList();
+            foreach (var list in lists)
+            {
+                result.Add(new GoalOverview{Name = list.Name, Progress = $"{list.Items.Count}/{list.Target}"});
+            }
 
-        // PUT: api/Goals/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+            var numbers = _context.NumberGoals.ToList();
+            foreach (var number in numbers)
+            {
+                result.Add(new GoalOverview{Name = number.Name, Progress = $"{number.Logs.Max(l => l.Amount)}"});
+            }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return result;
         }
     }
 }

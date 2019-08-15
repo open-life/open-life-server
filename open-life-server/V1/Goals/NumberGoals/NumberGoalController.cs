@@ -11,36 +11,56 @@ namespace open_life_server.V1.Goals.NumberGoals
     [ApiController]
     public class NumberGoalController : ControllerBase
     {
+        private readonly GoalsContext _context;
+
+        public NumberGoalController(GoalsContext context)
+        {
+            _context = context;
+        }
+
         // GET: api/NumberGoal
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<NumberGoal> Get()
         {
-            return new string[] { "value1", "value2" };
+            return _context.NumberGoals.ToList();
         }
 
         // GET: api/NumberGoal/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public NumberGoal Get(int id)
         {
-            return "value";
+            return _context.NumberGoals.Find(id);
         }
 
         // POST: api/NumberGoal
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post([FromBody] NumberGoal value)
         {
+            _context.NumberGoals.Add(value);
+            _context.SaveChanges();
         }
 
         // PUT: api/NumberGoal/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody] NumberGoal value)
         {
+            var numberToUpdate = _context.NumberGoals.Find(id);
+
+            numberToUpdate.Name = value.Name;
+            numberToUpdate.Target = value.Target;
+            numberToUpdate.Logs = value.Logs;
+
+            _context.NumberGoals.Update(numberToUpdate);
+            _context.SaveChanges();
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            var numberToDelete = _context.NumberGoals.Find(id);
+            _context.NumberGoals.Remove(numberToDelete);
+            _context.SaveChanges();
         }
     }
 }
