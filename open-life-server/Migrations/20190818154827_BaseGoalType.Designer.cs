@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using open_life_server.V1.Goals;
 
 namespace open_life_server.Migrations
 {
     [DbContext(typeof(GoalsContext))]
-    partial class GoalsContextModelSnapshot : ModelSnapshot
+    [Migration("20190818154827_BaseGoalType")]
+    partial class BaseGoalType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,9 +59,9 @@ namespace open_life_server.Migrations
                     b.Property<int>("ListGoalId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime>("EndDate");
+                    b.Property<string>("ColumnName");
 
-                    b.Property<string>("ListName");
+                    b.Property<DateTime>("EndDate");
 
                     b.Property<string>("Name");
 

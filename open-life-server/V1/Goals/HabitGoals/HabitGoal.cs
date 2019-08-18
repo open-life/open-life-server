@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace open_life_server.V1.Goals.HabitGoals
 {
-    public class HabitGoal
+    public class HabitGoal : Goal
     {
         public int HabitGoalId { get; set; }
-        public string Name { get; set; }
         public int Target { get; set; }
         public List<HabitLog> Logs { get; set; }
     }

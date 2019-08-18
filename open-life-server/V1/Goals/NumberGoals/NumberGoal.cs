@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace open_life_server.V1.Goals.NumberGoals
 {
-    public class NumberGoal
+    public class NumberGoal : Goal
     {
         public int NumberGoalId { get; set; }
-        public string Name { get; set; }
         public int Target { get; set; }
         public List<NumberLog> Logs { get; set; }
     }

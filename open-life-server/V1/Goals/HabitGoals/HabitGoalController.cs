@@ -46,6 +46,7 @@ namespace open_life_server.V1.Goals.HabitGoals
             habitToUpdate.Name = value.Name;
             habitToUpdate.Logs = value.Logs;
             habitToUpdate.Target = value.Target;
+            habitToUpdate.StartDate = value.StartDate;
 
             _context.HabitGoals.Update(habitToUpdate);
             _context.SaveChanges();

@@ -47,7 +47,7 @@ namespace open_life_server.V1.Goals.ListGoals
             var listToUpdate = _context.ListGoals.Find(id);
 
             listToUpdate.Name = value.Name;
-            listToUpdate.ColumnName = value.ColumnName;
+            listToUpdate.ListName = value.ListName;
             listToUpdate.Target = value.Target;
             listToUpdate.Items = value.Items;
 

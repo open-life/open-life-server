@@ -2,12 +2,11 @@
 
 namespace open_life_server.V1.Goals.ListGoals
 {
-    public class ListGoal
+    public class ListGoal : Goal
     {
         public int ListGoalId { get; set; }
-        public string Name { get; set; }
         public int Target { get; set; }
-        public string ColumnName { get; set; }
+        public string ListName { get; set; }
         public List<ListItem> Items { get; set; }
     }
 
