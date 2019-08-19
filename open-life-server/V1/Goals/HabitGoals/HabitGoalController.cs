@@ -29,6 +29,13 @@ namespace open_life_server.V1.Goals.HabitGoals
             return _context.HabitGoals.Find(id);
         }
 
+        // GET: api/HabitGoal/5/logs
+        [HttpGet("{id}/logs")]
+        public IEnumerable<HabitLog> GetLogs(int id)
+        {
+            return _context.HabitGoals.Find(id).Logs;
+        }
+
         // POST: api/HabitGoal
         [HttpPost]
         public void Post([FromBody] HabitGoal value)

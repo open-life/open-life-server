@@ -32,6 +32,13 @@ namespace open_life_server.V1.Goals.ListGoals
             return _context.ListGoals.Find(id);
         }
 
+        // GET: api/ListGoal/5/items
+        [HttpGet("{id}/items")]
+        public IEnumerable<ListItem> GetItems(int id)
+        {
+            return _context.ListGoals.Find(id).Items;
+        }
+
         // POST: api/ListGoal
         [HttpPost]
         public void Post([FromBody] ListGoal value)

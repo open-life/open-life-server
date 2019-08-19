@@ -32,6 +32,13 @@ namespace open_life_server.V1.Goals.NumberGoals
             return _context.NumberGoals.Find(id);
         }
 
+        // GET: api/NumberGoal/5/logs
+        [HttpGet("{id}/logs")]
+        public IEnumerable<NumberLog> GetLogs(int id)
+        {
+            return _context.NumberGoals.Find(id).Logs;
+        }
+
         // POST: api/NumberGoal
         [HttpPost]
         public void Post([FromBody] NumberGoal value)
