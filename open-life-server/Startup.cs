@@ -35,7 +35,7 @@ namespace open_life_server
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
-                }); ;
+                });
 
             services.AddCors(options =>
             {

@@ -7,7 +7,7 @@ namespace open_life_server.V1.Goals.NumberGoals
     {
         public int NumberGoalId { get; set; }
         public int Target { get; set; }
-        public List<NumberLog> Logs { get; set; }
+        public ICollection<NumberLog> Logs { get; set; }
     }
 
     public class NumberLog
@@ -17,6 +17,5 @@ namespace open_life_server.V1.Goals.NumberGoals
         public decimal Amount { get; set; }
 
         public int NumberGoalId { get; set; }
-        public NumberGoal NumberGoal { get; set; }
     }
 }

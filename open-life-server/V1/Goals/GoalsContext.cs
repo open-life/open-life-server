@@ -11,9 +11,9 @@ namespace open_life_server.V1.Goals
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<HabitGoal>().HasMany(h => h.Logs);
-            modelBuilder.Entity<ListGoal>().HasMany(l => l.Items);
-            modelBuilder.Entity<NumberGoal>().HasMany(n => n.Logs);
+            modelBuilder.Entity<HabitGoal>().HasMany(g => g.Logs);
+            modelBuilder.Entity<ListGoal>().HasMany(g => g.Items);
+            modelBuilder.Entity<NumberGoal>().HasMany(g => g.Logs);
         }
 
         public DbSet<HabitGoal> HabitGoals { get; set; }

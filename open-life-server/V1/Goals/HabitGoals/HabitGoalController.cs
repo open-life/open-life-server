@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace open_life_server.V1.Goals.HabitGoals
 {
@@ -19,21 +20,15 @@ namespace open_life_server.V1.Goals.HabitGoals
         [HttpGet]
         public IEnumerable<HabitGoal> Get()
         {
-            return _context.HabitGoals.ToList();
+            var goals = _context.HabitGoals.Include(h => h.Logs).ToList();
+            return goals;
         }
 
         // GET: api/HabitGoal/5
         [HttpGet("{id}")]
         public HabitGoal Get(int id)
         {
-            return _context.HabitGoals.Find(id);
-        }
-
-        // GET: api/HabitGoal/5/logs
-        [HttpGet("{id}/logs")]
-        public IEnumerable<HabitLog> GetLogs(int id)
-        {
-            return _context.HabitGoals.Find(id).Logs;
+            return _context.HabitGoals.Include(h => h.Logs).Single(h => h.HabitGoalId == id);
         }
 
         // POST: api/HabitGoal

@@ -7,7 +7,7 @@ namespace open_life_server.V1.Goals.ListGoals
         public int ListGoalId { get; set; }
         public int Target { get; set; }
         public string ListName { get; set; }
-        public List<ListItem> Items { get; set; }
+        public ICollection<ListItem> Items { get; set; }
     }
 
     public class ListItem
@@ -17,7 +17,6 @@ namespace open_life_server.V1.Goals.ListGoals
         public Progress Progress { get; set; }
 
         public int ListGoalId { get; set; }
-        public ListGoal ListGoal { get; set; }
     }
 
     public enum Progress

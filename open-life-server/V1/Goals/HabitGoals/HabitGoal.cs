@@ -7,7 +7,7 @@ namespace open_life_server.V1.Goals.HabitGoals
     {
         public int HabitGoalId { get; set; }
         public int Target { get; set; }
-        public List<HabitLog> Logs { get; set; }
+        public ICollection<HabitLog> Logs { get; set; }
     }
 
     public class HabitLog
@@ -17,6 +17,5 @@ namespace open_life_server.V1.Goals.HabitGoals
         public bool HabitCompleted { get; set; }
 
         public int HabitGoalId { get; set; }
-        public HabitGoal HabitGoal { get; set; }
     }
 }
