@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace open_life_server.V1.Goals.NumberGoals
 {
@@ -22,21 +20,14 @@ namespace open_life_server.V1.Goals.NumberGoals
         [HttpGet]
         public IEnumerable<NumberGoal> Get()
         {
-            return _context.NumberGoals.ToList();
+            return _context.NumberGoals.Include(g => g.Logs).ToList();
         }
 
         // GET: api/NumberGoal/5
         [HttpGet("{id}")]
         public NumberGoal Get(int id)
         {
-            return _context.NumberGoals.Find(id);
-        }
-
-        // GET: api/NumberGoal/5/logs
-        [HttpGet("{id}/logs")]
-        public IEnumerable<NumberLog> GetLogs(int id)
-        {
-            return _context.NumberGoals.Find(id).Logs;
+            return _context.NumberGoals.Include(g => g.Logs).Single(g => g.NumberGoalId == id);
         }
 
         // POST: api/NumberGoal
