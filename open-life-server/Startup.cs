@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
 using open_life_server.V1.Goals;
+using open_life_server.V1.Users;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace open_life_server
@@ -22,7 +23,11 @@ namespace open_life_server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Database
             services.AddDbContext<GoalsContext>(options => options.UseSqlite("Data Source=goals.db"));
+            services.AddDbContext<UsersContext>(options => options.UseSqlite("Data Source=users.db"));
+
+            services.AddTransient<IUserValidator, UserValidator>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
