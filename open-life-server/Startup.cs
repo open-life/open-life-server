@@ -27,7 +27,9 @@ namespace open_life_server
             services.AddDbContext<GoalsContext>(options => options.UseSqlite("Data Source=goals.db"));
             services.AddDbContext<UsersContext>(options => options.UseSqlite("Data Source=users.db"));
 
+            //Validators
             services.AddTransient<IUserValidator, UserValidator>();
+            services.AddTransient<IGoalValidator, GoalValidator>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
