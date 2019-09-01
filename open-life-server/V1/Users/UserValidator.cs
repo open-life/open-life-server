@@ -13,6 +13,13 @@ namespace open_life_server.V1.Users
 
     public class UserValidator : IUserValidator
     {
+        private readonly OpenLifeContext _context;
+
+        public UserValidator(OpenLifeContext context)
+        {
+            _context = context;
+        }
+
         public bool Valid(User user)
         {
             if (string.IsNullOrEmpty(user.Name) || string.IsNullOrWhiteSpace(user.Name))
@@ -29,6 +36,9 @@ namespace open_life_server.V1.Users
             {
                 return false;
             }
+
+            if (_context.Users.Any(u => u.Email == user.Email))
+                return false;
 
             if (!string.IsNullOrEmpty(user.ImageUrl) && !string.IsNullOrWhiteSpace(user.ImageUrl))
             {
@@ -56,7 +66,7 @@ namespace open_life_server.V1.Users
                 return "Email address is not valid.";
             }
 
-            return "Image url is not valid.";
+            return _context.Users.Any(u => u.Email == user.Email) ? "Email must be unique;" : "Image url is not valid.";
         }
     }
 }

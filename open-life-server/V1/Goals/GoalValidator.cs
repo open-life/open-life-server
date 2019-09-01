@@ -28,7 +28,7 @@ namespace open_life_server.V1.Goals
             if (!_context.Users.Any(u => u.UserId == goal.UserId))
                 return false;
 
-            return goal.StartDate > goal.EndDate;
+            return goal.StartDate < goal.EndDate;
         }
 
         public string GetInvalidMessage(Goal goal)

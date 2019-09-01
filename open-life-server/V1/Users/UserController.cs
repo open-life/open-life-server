@@ -18,7 +18,6 @@ namespace open_life_server.V1.Users
             _validator = validator;
         }
 
-        // GET: api/User
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<User>), StatusCodes.Status200OK)]
         public IActionResult Get()
@@ -26,11 +25,10 @@ namespace open_life_server.V1.Users
             return Ok(_context.Users.ToList());
         }
 
-        // GET: api/User/pchaffee@gmail.com
-        [HttpGet("{email}")]
+        [HttpGet("email/{email}")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public IActionResult Get(string email)
+        public IActionResult GetWithEmail([FromRoute]string email)
         {
             var user = _context.Users.SingleOrDefault(u => u.Email == email);
             if (user != null)
@@ -39,7 +37,18 @@ namespace open_life_server.V1.Users
             return NoContent();
         }
 
-        // POST: api/User
+        [HttpGet("username/{username}")]
+        [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public IActionResult GetWithUsername([FromRoute]string username)
+        {
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user != null)
+                return Ok(user);
+
+            return NoContent();
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -50,20 +59,20 @@ namespace open_life_server.V1.Users
 
             var user = _context.Users.Add(value).Entity;
             _context.SaveChanges();
+
             return Ok(user);
         }
 
-        // PUT: api/User/5
-        [HttpPut("{email}")]
+        [HttpPut("{id}")]
         [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Put(string email, [FromBody] User value)
+        public IActionResult Put(int id, [FromBody] User value)
         {
             if (!_validator.Valid(value))
                 return BadRequest(_validator.GetInvalidMessage(value));
 
-            var existingUser = _context.Users.SingleOrDefault(u => u.Email == email);
+            var existingUser = _context.Users.Find(id);
 
             if (existingUser == null)
                 return NotFound();
@@ -75,20 +84,22 @@ namespace open_life_server.V1.Users
 
             existingUser = _context.Users.Update(existingUser).Entity;
             _context.SaveChanges();
+
             return Ok(existingUser);
         }
 
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{email}")]
+        [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Delete(string email)
+        public IActionResult Delete(int id)
         {
-            var user = _context.Users.SingleOrDefault(u => u.Email == email);
+            var user = _context.Users.Find(id);
             if (user == null)
                 return NotFound();
 
             _context.Remove(user);
+            _context.SaveChanges();
+
             return Accepted();
         }
     }

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace open_life_server.V1.Goals.ListGoals
 {
@@ -14,11 +16,14 @@ namespace open_life_server.V1.Goals.ListGoals
     {
         public int ListItemId { get; set; }
         public string Name { get; set; }
+
+        [JsonConverter(typeof(StringEnumConverter))]
         public Progress Progress { get; set; }
 
         public int ListGoalId { get; set; }
     }
 
+    [JsonConverter(typeof(StringEnumConverter))]
     public enum Progress
     {
         Completed,

@@ -31,19 +31,6 @@ namespace open_life_server.V1.Goals.HabitGoals
             return Ok(_context.HabitGoals.Include(h => h.Logs).Where(g => g.UserId == user.UserId).ToList());
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(HabitGoal), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get(int id)
-        {
-            var goal = _context.HabitGoals.Include(h => h.Logs).Single(h => h.HabitGoalId == id);
-
-            if (goal == null)
-                return NotFound();
-
-            return Ok(goal);
-        }
-
         [HttpPost]
         [ProducesResponseType(typeof(HabitGoal), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

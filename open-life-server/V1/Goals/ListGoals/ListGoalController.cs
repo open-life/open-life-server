@@ -32,20 +32,6 @@ namespace open_life_server.V1.Goals.ListGoals
             return Ok(_context.ListGoals.Include(g => g.Items).Where(g => g.UserId == user.UserId).ToList());
         }
 
-        // GET: api/ListGoal/5
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(ListGoal), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get(int id)
-        {
-            var goal = _context.ListGoals.Include(g => g.Items).Single(g => g.ListGoalId == id);
-
-            if (goal == null)
-                return NotFound();
-
-            return Ok(goal);
-        }
-
         // POST: api/ListGoal
         [HttpPost]
         [ProducesResponseType(typeof(ListGoal), StatusCodes.Status200OK)]
