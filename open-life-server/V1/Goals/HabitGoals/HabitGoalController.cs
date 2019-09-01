@@ -10,24 +10,27 @@ namespace open_life_server.V1.Goals.HabitGoals
     [ApiController]
     public class HabitGoalController : ControllerBase
     {
-        private readonly GoalsContext _context;
-        private readonly HabitGoalValidator _validator;
+        private readonly OpenLifeContext _context;
+        private readonly IHabitGoalValidator _validator;
 
-        public HabitGoalController(GoalsContext context, HabitGoalValidator validator)
+        public HabitGoalController(OpenLifeContext context, IHabitGoalValidator validator)
         {
             _context = context;
             _validator = validator;
         }
 
-        // GET: api/HabitGoal
-        [HttpGet]
+        [HttpGet("{username}")]
         [ProducesResponseType(typeof(IEnumerable<HabitGoal>), StatusCodes.Status200OK)]
-        public IEnumerable<HabitGoal> Get()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get([FromRoute]string username)
         {
-            return _context.HabitGoals.Include(h => h.Logs).ToList();
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null)
+                return NotFound($"User with username {username} not found.");
+
+            return Ok(_context.HabitGoals.Include(h => h.Logs).Where(g => g.UserId == user.UserId).ToList());
         }
 
-        // GET: api/HabitGoal/5
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(HabitGoal), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -41,7 +44,6 @@ namespace open_life_server.V1.Goals.HabitGoals
             return Ok(goal);
         }
 
-        // POST: api/HabitGoal
         [HttpPost]
         [ProducesResponseType(typeof(HabitGoal), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -56,7 +58,6 @@ namespace open_life_server.V1.Goals.HabitGoals
             return Ok(goal);
         }
 
-        // PUT: api/HabitGoal/5
         [HttpPut("{id}")]
         [ProducesResponseType(typeof(HabitGoal), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -81,7 +82,6 @@ namespace open_life_server.V1.Goals.HabitGoals
             return Ok(goal);
         }
 
-        // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

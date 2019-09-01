@@ -2,17 +2,15 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using open_life_server.V1.Goals;
+using open_life_server.V1;
 
 namespace open_life_server.Migrations
 {
-    [DbContext(typeof(GoalsContext))]
-    [Migration("20190824101240_Links")]
-    partial class Links
+    [DbContext(typeof(OpenLifeContext))]
+    partial class OpenLifeContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +29,11 @@ namespace open_life_server.Migrations
 
                     b.Property<int>("Target");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("HabitGoalId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("HabitGoals");
                 });
@@ -69,7 +71,11 @@ namespace open_life_server.Migrations
 
                     b.Property<int>("Target");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("ListGoalId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ListGoals");
                 });
@@ -105,7 +111,11 @@ namespace open_life_server.Migrations
 
                     b.Property<int>("Target");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("NumberGoalId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("NumberGoals");
                 });
@@ -128,25 +138,67 @@ namespace open_life_server.Migrations
                     b.ToTable("NumberLogs");
                 });
 
+            modelBuilder.Entity("open_life_server.V1.Users.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Email");
+
+                    b.Property<string>("ImageUrl");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Username");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("open_life_server.V1.Goals.HabitGoals.HabitGoal", b =>
+                {
+                    b.HasOne("open_life_server.V1.Users.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("open_life_server.V1.Goals.HabitGoals.HabitLog", b =>
                 {
-                    b.HasOne("open_life_server.V1.Goals.HabitGoals.HabitGoal", "HabitGoal")
+                    b.HasOne("open_life_server.V1.Goals.HabitGoals.HabitGoal")
                         .WithMany("Logs")
                         .HasForeignKey("HabitGoalId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("open_life_server.V1.Goals.ListGoals.ListGoal", b =>
+                {
+                    b.HasOne("open_life_server.V1.Users.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("open_life_server.V1.Goals.ListGoals.ListItem", b =>
                 {
-                    b.HasOne("open_life_server.V1.Goals.ListGoals.ListGoal", "ListGoal")
+                    b.HasOne("open_life_server.V1.Goals.ListGoals.ListGoal")
                         .WithMany("Items")
                         .HasForeignKey("ListGoalId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("open_life_server.V1.Goals.NumberGoals.NumberGoal", b =>
+                {
+                    b.HasOne("open_life_server.V1.Users.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("open_life_server.V1.Goals.NumberGoals.NumberLog", b =>
                 {
-                    b.HasOne("open_life_server.V1.Goals.NumberGoals.NumberGoal", "NumberGoal")
+                    b.HasOne("open_life_server.V1.Goals.NumberGoals.NumberGoal")
                         .WithMany("Logs")
                         .HasForeignKey("NumberGoalId")
                         .OnDelete(DeleteBehavior.Cascade);

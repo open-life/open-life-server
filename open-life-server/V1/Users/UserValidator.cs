@@ -18,6 +18,9 @@ namespace open_life_server.V1.Users
             if (string.IsNullOrEmpty(user.Name) || string.IsNullOrWhiteSpace(user.Name))
                 return false;
 
+            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrWhiteSpace(user.Username))
+                return false;
+
             try
             {
                 var unused = new System.Net.Mail.MailAddress(user.Email);
@@ -40,6 +43,9 @@ namespace open_life_server.V1.Users
         {
             if (string.IsNullOrEmpty(user.Name) || string.IsNullOrWhiteSpace(user.Name))
                 return "Name is not valid.";
+
+            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrWhiteSpace(user.Username))
+                return "Username is not valid.";
 
             try
             {

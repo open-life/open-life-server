@@ -10,21 +10,26 @@ namespace open_life_server.V1.Goals.ListGoals
     [ApiController]
     public class ListGoalController : ControllerBase
     {
-        private readonly GoalsContext _context;
+        private readonly OpenLifeContext _context;
         private readonly IListGoalValidator _validator;
 
-        public ListGoalController(GoalsContext context, IListGoalValidator validator)
+        public ListGoalController(OpenLifeContext context, IListGoalValidator validator)
         {
             _context = context;
             _validator = validator;
         }
 
         // GET: api/ListGoal
-        [HttpGet]
+        [HttpGet("{username}")]
         [ProducesResponseType(typeof(IEnumerable<ListGoal>), StatusCodes.Status200OK)]
-        public IActionResult Get()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get([FromRoute]string username)
         {
-            return Ok(_context.ListGoals.Include(g => g.Items).ToList());
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null)
+                return NotFound($"User with username {username} not found.");
+
+            return Ok(_context.ListGoals.Include(g => g.Items).Where(g => g.UserId == user.UserId).ToList());
         }
 
         // GET: api/ListGoal/5

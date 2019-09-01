@@ -8,16 +8,42 @@ namespace open_life_server.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(nullable: true),
+                    Username = table.Column<string>(nullable: true),
+                    Email = table.Column<string>(nullable: true),
+                    ImageUrl = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "HabitGoals",
                 columns: table => new
                 {
                     HabitGoalId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Name = table.Column<string>(nullable: true)
+                    UserId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
+                    Target = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_HabitGoals", x => x.HabitGoalId);
+                    table.ForeignKey(
+                        name: "FK_HabitGoals_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -26,13 +52,22 @@ namespace open_life_server.Migrations
                 {
                     ListGoalId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
                     Target = table.Column<int>(nullable: false),
-                    ColumnName = table.Column<string>(nullable: true)
+                    ListName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ListGoals", x => x.ListGoalId);
+                    table.ForeignKey(
+                        name: "FK_ListGoals_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -41,12 +76,21 @@ namespace open_life_server.Migrations
                 {
                     NumberGoalId = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
+                    UserId = table.Column<int>(nullable: false),
                     Name = table.Column<string>(nullable: true),
+                    StartDate = table.Column<DateTime>(nullable: false),
+                    EndDate = table.Column<DateTime>(nullable: false),
                     Target = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_NumberGoals", x => x.NumberGoalId);
+                    table.ForeignKey(
+                        name: "FK_NumberGoals_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "UserId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -113,14 +157,29 @@ namespace open_life_server.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_HabitGoals_UserId",
+                table: "HabitGoals",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_HabitLogs_HabitGoalId",
                 table: "HabitLogs",
                 column: "HabitGoalId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ListGoals_UserId",
+                table: "ListGoals",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ListItems_ListGoalId",
                 table: "ListItems",
                 column: "ListGoalId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_NumberGoals_UserId",
+                table: "NumberGoals",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_NumberLogs_NumberGoalId",
@@ -147,6 +206,9 @@ namespace open_life_server.Migrations
 
             migrationBuilder.DropTable(
                 name: "NumberGoals");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }

@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using open_life_server.V1.Goals;
+using open_life_server.V1;
 
 namespace open_life_server.Migrations
 {
-    [DbContext(typeof(GoalsContext))]
-    [Migration("20190824121334_LoadLogs")]
-    partial class LoadLogs
+    [DbContext(typeof(OpenLifeContext))]
+    [Migration("20190901144256_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,7 +31,11 @@ namespace open_life_server.Migrations
 
                     b.Property<int>("Target");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("HabitGoalId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("HabitGoals");
                 });
@@ -69,7 +73,11 @@ namespace open_life_server.Migrations
 
                     b.Property<int>("Target");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("ListGoalId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ListGoals");
                 });
@@ -105,7 +113,11 @@ namespace open_life_server.Migrations
 
                     b.Property<int>("Target");
 
+                    b.Property<int>("UserId");
+
                     b.HasKey("NumberGoalId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("NumberGoals");
                 });
@@ -128,6 +140,32 @@ namespace open_life_server.Migrations
                     b.ToTable("NumberLogs");
                 });
 
+            modelBuilder.Entity("open_life_server.V1.Users.User", b =>
+                {
+                    b.Property<int>("UserId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Email");
+
+                    b.Property<string>("ImageUrl");
+
+                    b.Property<string>("Name");
+
+                    b.Property<string>("Username");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("open_life_server.V1.Goals.HabitGoals.HabitGoal", b =>
+                {
+                    b.HasOne("open_life_server.V1.Users.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("open_life_server.V1.Goals.HabitGoals.HabitLog", b =>
                 {
                     b.HasOne("open_life_server.V1.Goals.HabitGoals.HabitGoal")
@@ -136,11 +174,27 @@ namespace open_life_server.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("open_life_server.V1.Goals.ListGoals.ListGoal", b =>
+                {
+                    b.HasOne("open_life_server.V1.Users.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("open_life_server.V1.Goals.ListGoals.ListItem", b =>
                 {
                     b.HasOne("open_life_server.V1.Goals.ListGoals.ListGoal")
                         .WithMany("Items")
                         .HasForeignKey("ListGoalId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("open_life_server.V1.Goals.NumberGoals.NumberGoal", b =>
+                {
+                    b.HasOne("open_life_server.V1.Users.User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

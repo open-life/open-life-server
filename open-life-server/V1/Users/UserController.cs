@@ -9,10 +9,10 @@ namespace open_life_server.V1.Users
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UsersContext _context;
+        private readonly OpenLifeContext _context;
         private readonly IUserValidator _validator;
 
-        public UserController(UsersContext context, IUserValidator validator)
+        public UserController(OpenLifeContext context, IUserValidator validator)
         {
             _context = context;
             _validator = validator;
@@ -69,6 +69,7 @@ namespace open_life_server.V1.Users
                 return NotFound();
 
             existingUser.Name = value.Name;
+            existingUser.Username = value.Username;
             existingUser.Email = value.Email;
             existingUser.ImageUrl = value.ImageUrl;
 

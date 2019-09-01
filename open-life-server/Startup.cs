@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Serialization;
+using open_life_server.V1;
 using open_life_server.V1.Goals;
 using open_life_server.V1.Goals.HabitGoals;
 using open_life_server.V1.Goals.ListGoals;
@@ -27,8 +28,7 @@ namespace open_life_server
         public void ConfigureServices(IServiceCollection services)
         {
             //Database
-            services.AddDbContext<GoalsContext>(options => options.UseSqlite("Data Source=goals.db"));
-            services.AddDbContext<UsersContext>(options => options.UseSqlite("Data Source=users.db"));
+            services.AddDbContext<OpenLifeContext>(options => options.UseSqlite("Data Source=main.db"));
 
             //Validators
             services.AddTransient<IUserValidator, UserValidator>();

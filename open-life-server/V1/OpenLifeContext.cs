@@ -2,18 +2,24 @@
 using open_life_server.V1.Goals.HabitGoals;
 using open_life_server.V1.Goals.ListGoals;
 using open_life_server.V1.Goals.NumberGoals;
+using open_life_server.V1.Users;
 
-namespace open_life_server.V1.Goals
+namespace open_life_server.V1
 {
-    public class GoalsContext : DbContext
+    public class OpenLifeContext : DbContext
     {
-        public GoalsContext(DbContextOptions options) : base(options) { }
+        public OpenLifeContext(DbContextOptions options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<HabitGoal>().HasMany(g => g.Logs);
+            modelBuilder.Entity<HabitGoal>().HasOne<User>().WithMany().HasForeignKey(g => g.UserId);
+
             modelBuilder.Entity<ListGoal>().HasMany(g => g.Items);
+            modelBuilder.Entity<ListGoal>().HasOne<User>().WithMany().HasForeignKey(g => g.UserId);
+
             modelBuilder.Entity<NumberGoal>().HasMany(g => g.Logs);
+            modelBuilder.Entity<NumberGoal>().HasOne<User>().WithMany().HasForeignKey(g => g.UserId);
         }
 
         public DbSet<HabitGoal> HabitGoals { get; set; }
@@ -24,5 +30,7 @@ namespace open_life_server.V1.Goals
 
         public DbSet<NumberGoal> NumberGoals { get; set; }
         public DbSet<NumberLog> NumberLogs { get; set; }
+
+        public DbSet<User> Users { get; set; }
     }
 }

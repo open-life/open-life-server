@@ -10,21 +10,26 @@ namespace open_life_server.V1.Goals.NumberGoals
     [ApiController]
     public class NumberGoalController : ControllerBase
     {
-        private readonly GoalsContext _context;
+        private readonly OpenLifeContext _context;
         private readonly INumberGoalValidator _validator;
 
-        public NumberGoalController(GoalsContext context, INumberGoalValidator validator)
+        public NumberGoalController(OpenLifeContext context, INumberGoalValidator validator)
         {
             _context = context;
             _validator = validator;
         }
 
         // GET: api/NumberGoal
-        [HttpGet]
+        [HttpGet("{username}")]
         [ProducesResponseType(typeof(IEnumerable<NumberGoal>), StatusCodes.Status200OK)]
-        public IActionResult Get()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get([FromRoute]string username)
         {
-            return Ok(_context.NumberGoals.Include(g => g.Logs).ToList());
+            var user = _context.Users.SingleOrDefault(u => u.Username == username);
+            if (user == null)
+                return NotFound($"User with username {username} not found.");
+
+            return Ok(_context.NumberGoals.Include(g => g.Logs).Where(g => g.UserId == user.UserId).ToList());
         }
 
         // GET: api/NumberGoal/5
