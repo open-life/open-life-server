@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,55 +11,88 @@ namespace open_life_server.V1.Goals.NumberGoals
     public class NumberGoalController : ControllerBase
     {
         private readonly GoalsContext _context;
+        private readonly INumberGoalValidator _validator;
 
-        public NumberGoalController(GoalsContext context)
+        public NumberGoalController(GoalsContext context, INumberGoalValidator validator)
         {
             _context = context;
+            _validator = validator;
         }
 
         // GET: api/NumberGoal
         [HttpGet]
-        public IEnumerable<NumberGoal> Get()
+        [ProducesResponseType(typeof(IEnumerable<NumberGoal>), StatusCodes.Status200OK)]
+        public IActionResult Get()
         {
-            return _context.NumberGoals.Include(g => g.Logs).ToList();
+            return Ok(_context.NumberGoals.Include(g => g.Logs).ToList());
         }
 
         // GET: api/NumberGoal/5
         [HttpGet("{id}")]
-        public NumberGoal Get(int id)
+        [ProducesResponseType(typeof(NumberGoal), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Get(int id)
         {
-            return _context.NumberGoals.Include(g => g.Logs).Single(g => g.NumberGoalId == id);
+            var goal = _context.NumberGoals.Include(g => g.Logs).Single(g => g.NumberGoalId == id);
+
+            if (goal == null)
+                return NotFound();
+
+            return Ok(goal);
         }
 
         // POST: api/NumberGoal
         [HttpPost]
-        public void Post([FromBody] NumberGoal value)
+        [ProducesResponseType(typeof(NumberGoal), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public IActionResult Post([FromBody] NumberGoal value)
         {
-            _context.NumberGoals.Add(value);
+            if (!_validator.Valid(value))
+                return BadRequest(_validator.GetInvalidMessage(value));
+
+            var goal = _context.NumberGoals.Add(value).Entity;
             _context.SaveChanges();
+
+            return Ok(goal);
         }
 
         // PUT: api/NumberGoal/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] NumberGoal value)
+        [ProducesResponseType(typeof(NumberGoal), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Put(int id, [FromBody] NumberGoal value)
         {
+            if (!_validator.Valid(value))
+                return BadRequest(_validator.GetInvalidMessage(value));
+
             var numberToUpdate = _context.NumberGoals.Find(id);
+            if (numberToUpdate == null)
+                return NotFound();
 
             numberToUpdate.Name = value.Name;
             numberToUpdate.Target = value.Target;
             numberToUpdate.Logs = value.Logs;
 
-            _context.NumberGoals.Update(numberToUpdate);
+            var goal = _context.NumberGoals.Update(numberToUpdate).Entity;
             _context.SaveChanges();
+
+            return Ok(goal);
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult Delete(int id)
         {
             var numberToDelete = _context.NumberGoals.Find(id);
+            if (numberToDelete == null)
+                return NotFound();
+
             _context.NumberGoals.Remove(numberToDelete);
             _context.SaveChanges();
+            return Accepted();
         }
     }
 }

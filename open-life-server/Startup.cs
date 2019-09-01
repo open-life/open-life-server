@@ -8,6 +8,7 @@ using Newtonsoft.Json.Serialization;
 using open_life_server.V1.Goals;
 using open_life_server.V1.Goals.HabitGoals;
 using open_life_server.V1.Goals.ListGoals;
+using open_life_server.V1.Goals.NumberGoals;
 using open_life_server.V1.Users;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -34,6 +35,7 @@ namespace open_life_server
             services.AddTransient<IGoalValidator, GoalValidator>();
             services.AddTransient<IHabitGoalValidator, HabitGoalValidator>();
             services.AddTransient<IListGoalValidator, ListGoalValidator>();
+            services.AddTransient<INumberGoalValidator, NumberGoalValidator>();
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
