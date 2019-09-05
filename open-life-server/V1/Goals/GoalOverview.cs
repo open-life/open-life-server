@@ -4,5 +4,7 @@
     {
         public string Name { get; set; }
         public string Progress { get; set; }
+
+        public int UserId { get; set; }
     }
 }

@@ -33,19 +33,19 @@ namespace open_life_server.V1.Goals
             var habits = _context.HabitGoals.Where(g => g.UserId == user.UserId);
             foreach (var habit in habits)
             {
-                result.Add(new GoalOverview { Name = habit.Name, Progress = $"{(habit.Logs?.Count(l => l.HabitCompleted) ?? 0 / habit.Target) * 100}%" });
+                result.Add(new GoalOverview { Name = habit.Name, Progress = $"{(habit.Logs?.Count(l => l.HabitCompleted) ?? 0 / habit.Target) * 100}%", UserId = user.UserId });
             }
 
             var lists = _context.ListGoals.Where(g => g.UserId == user.UserId);
             foreach (var list in lists)
             {
-                result.Add(new GoalOverview { Name = list.Name, Progress = $"{list.Items?.Count ?? 0}/{list.Target}" });
+                result.Add(new GoalOverview { Name = list.Name, Progress = $"{list.Items?.Count ?? 0}/{list.Target}", UserId = user.UserId });
             }
 
             var numbers = _context.NumberGoals.Where(g => g.UserId == user.UserId);
             foreach (var number in numbers)
             {
-                result.Add(new GoalOverview { Name = number.Name, Progress = $"{number.Logs?.Max(l => l.Amount) ?? 0}" });
+                result.Add(new GoalOverview { Name = number.Name, Progress = $"{number.Logs?.Max(l => l.Amount) ?? 0}", UserId = user.UserId });
             }
 
             return Ok(result);
