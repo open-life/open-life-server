@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace open_life_server.V1.Goals
 {
@@ -30,22 +31,23 @@ namespace open_life_server.V1.Goals
 
             var result = new List<GoalOverview>();
 
-            var habits = _context.HabitGoals.Where(g => g.UserId == user.UserId);
+            var habits = _context.HabitGoals.Include(g => g.Logs).Where(g => g.UserId == user.UserId);
             foreach (var habit in habits)
             {
-                result.Add(new GoalOverview { Name = habit.Name, Progress = $"{(habit.Logs?.Count(l => l.HabitCompleted) ?? 0 / habit.Target) * 100}%", UserId = user.UserId });
+                result.Add(new GoalOverview { Name = habit.Name, Progress = habit.Logs?.Count(l => l.HabitCompleted) ?? 0, Target = habit.Target, UserId = user.UserId });
             }
 
-            var lists = _context.ListGoals.Where(g => g.UserId == user.UserId);
+            var lists = _context.ListGoals.Include(g => g.Items).Where(g => g.UserId == user.UserId);
             foreach (var list in lists)
             {
-                result.Add(new GoalOverview { Name = list.Name, Progress = $"{list.Items?.Count ?? 0}/{list.Target}", UserId = user.UserId });
+                result.Add(new GoalOverview { Name = list.Name, Progress = list.Items?.Count ?? 0, Target = list.Target, UserId = user.UserId });
             }
 
-            var numbers = _context.NumberGoals.Where(g => g.UserId == user.UserId);
+            var numbers = _context.NumberGoals.Include(g => g.Logs).Where(g => g.UserId == user.UserId);
             foreach (var number in numbers)
             {
-                result.Add(new GoalOverview { Name = number.Name, Progress = $"{number.Logs?.Max(l => l.Amount) ?? 0}", UserId = user.UserId });
+                var progress = number.Logs != null && number.Logs.Any() ? number.Logs?.Max(l => l.Amount) : 0;
+                result.Add(new GoalOverview { Name = number.Name, Progress = progress.Value, Target = number.Target, UserId = user.UserId });
             }
 
             return Ok(result);

@@ -54,15 +54,28 @@ namespace open_life_server.V1.Goals.HabitGoals
             if (!_validator.Valid(value))
                 return BadRequest(_validator.GetInvalidMessage(value));
 
-            var habitToUpdate = _context.HabitGoals.Find(id);
+            var habitToUpdate = _context.HabitGoals.Include(g => g.Logs).Single(g => g.HabitGoalId == id);
 
             if (habitToUpdate == null)
                 return NotFound();
 
             habitToUpdate.Name = value.Name;
-            habitToUpdate.Logs = value.Logs;
             habitToUpdate.Target = value.Target;
             habitToUpdate.StartDate = value.StartDate;
+            foreach (var log in value.Logs)
+            {
+                if (habitToUpdate.Logs.Any(i => i.HabitLogId == log.HabitLogId))
+                {
+                    var logToUpdate = habitToUpdate.Logs.Single(i => i.HabitLogId == log.HabitLogId);
+                    logToUpdate.Date = log.Date;
+                    logToUpdate.HabitCompleted = log.HabitCompleted;
+                    _context.HabitLogs.Update(logToUpdate);
+                }
+                else
+                {
+                    _context.HabitLogs.Add(log);
+                }
+            }
 
             var goal = _context.HabitGoals.Update(habitToUpdate).Entity;
             _context.SaveChanges();

@@ -57,13 +57,26 @@ namespace open_life_server.V1.Goals.NumberGoals
             if (!_validator.Valid(value))
                 return BadRequest(_validator.GetInvalidMessage(value));
 
-            var numberToUpdate = _context.NumberGoals.Find(id);
+            var numberToUpdate = _context.NumberGoals.Include(g => g.Logs).Single(g => g.NumberGoalId == id);
             if (numberToUpdate == null)
                 return NotFound();
 
             numberToUpdate.Name = value.Name;
             numberToUpdate.Target = value.Target;
-            numberToUpdate.Logs = value.Logs;
+            foreach (var log in value.Logs)
+            {
+                if (numberToUpdate.Logs.Any(i => i.NumberLogId == log.NumberLogId))
+                {
+                    var logToUpdate = numberToUpdate.Logs.Single(i => i.NumberLogId == log.NumberLogId);
+                    logToUpdate.Date = log.Date;
+                    logToUpdate.Amount = log.Amount;
+                    _context.NumberLogs.Update(logToUpdate);
+                }
+                else
+                {
+                    _context.NumberLogs.Add(log);
+                }
+            }
 
             var goal = _context.NumberGoals.Update(numberToUpdate).Entity;
             _context.SaveChanges();

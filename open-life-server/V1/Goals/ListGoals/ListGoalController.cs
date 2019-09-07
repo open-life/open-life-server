@@ -57,14 +57,27 @@ namespace open_life_server.V1.Goals.ListGoals
             if (!_validator.Valid(value))
                 return BadRequest(_validator.GetInvalidMessage(value));
 
-            var listToUpdate = _context.ListGoals.Find(id);
+            var listToUpdate = _context.ListGoals.Include(g => g.Items).Single(g => g.ListGoalId == id);
             if (listToUpdate == null)
                 return NotFound();
 
             listToUpdate.Name = value.Name;
             listToUpdate.ListName = value.ListName;
             listToUpdate.Target = value.Target;
-            listToUpdate.Items = value.Items;
+            foreach (var item in value.Items)
+            {
+                if (listToUpdate.Items.Any(i => i.ListItemId == item.ListItemId))
+                {
+                    var itemToUpdate = listToUpdate.Items.Single(i => i.ListItemId == item.ListItemId);
+                    itemToUpdate.Name = item.Name;
+                    itemToUpdate.Progress = item.Progress;
+                    _context.ListItems.Update(itemToUpdate);
+                }
+                else
+                {
+                    _context.ListItems.Add(item);
+                }
+            }
 
             var goal = _context.ListGoals.Update(listToUpdate).Entity;
             _context.SaveChanges();
