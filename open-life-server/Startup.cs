@@ -28,7 +28,7 @@ namespace open_life_server
         public void ConfigureServices(IServiceCollection services)
         {
             //Database
-            services.AddDbContext<OpenLifeContext>(options => options.UseSqlite("Data Source=main.db"));
+            services.AddDbContext<OpenLifeContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             //Validators
             services.AddTransient<IUserValidator, UserValidator>();
