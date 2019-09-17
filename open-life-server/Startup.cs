@@ -12,6 +12,7 @@ using open_life_server.V1.Goals.ListGoals;
 using open_life_server.V1.Goals.NumberGoals;
 using open_life_server.V1.Users;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Configuration;
 
 namespace open_life_server
 {
@@ -28,7 +29,7 @@ namespace open_life_server
         public void ConfigureServices(IServiceCollection services)
         {
             //Database
-            services.AddDbContext<OpenLifeContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<OpenLifeContext>(options => options.UseNpgsql(GetRDSConnectionString()));
 
             //Validators
             services.AddTransient<IUserValidator, UserValidator>();
@@ -58,6 +59,22 @@ namespace open_life_server
                         builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
                     });
             });
+        }
+
+        private static string GetRDSConnectionString()
+        {
+            var appConfig = ConfigurationManager.AppSettings;
+
+            var dbname = appConfig["RDS_DB_NAME"];
+
+            if (string.IsNullOrEmpty(dbname)) return null;
+
+            var username = appConfig["RDS_USERNAME"];
+            var password = appConfig["RDS_PASSWORD"];
+            var hostname = appConfig["RDS_HOSTNAME"];
+            var port = appConfig["RDS_PORT"];
+
+            return "Data Source=" + hostname + ";Initial Catalog=" + dbname + ";User ID=" + username + ";Password=" + password + ";";
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
