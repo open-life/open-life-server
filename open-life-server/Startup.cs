@@ -56,7 +56,13 @@ namespace open_life_server
                 options.AddPolicy("dev",
                     builder =>
                     {
-                        builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+                        builder.WithOrigins("http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+                    });
+
+                options.AddPolicy("prod",
+                    builder =>
+                    {
+                        builder.WithOrigins("https://beta.myopen.life").AllowAnyHeader().AllowAnyMethod();
                     });
             });
         }
@@ -79,12 +85,14 @@ namespace open_life_server
         {
             if (env.IsDevelopment())
             {
+                app.UseCors("dev");
                 app.UseDeveloperExceptionPage();
             }
             else
             {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+                app.UseCors("prod");
             }
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
@@ -99,7 +107,6 @@ namespace open_life_server
             });
 
             app.UseHttpsRedirection();
-            app.UseCors("dev");
             app.UseMvc();
         }
     }
