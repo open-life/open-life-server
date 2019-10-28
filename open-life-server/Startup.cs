@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -44,6 +45,7 @@ namespace open_life_server
                 c.SwaggerDoc("v1", new Info{ Title = "Open Life API", Version = "v1" });
             });
 
+            // MVC
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_2)
                 .AddJsonOptions(options =>
@@ -51,6 +53,7 @@ namespace open_life_server
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 
+            // CORS
             services.AddCors(options =>
             {
                 options.AddPolicy("dev",
@@ -64,6 +67,19 @@ namespace open_life_server
                     {
                         builder.WithOrigins("https://beta.myopen.life").AllowAnyHeader().AllowAnyMethod();
                     });
+            });
+
+            // Auth0 Authentication/Authorization
+            string domain = $"https://{Configuration["Auth0:Domain"]}/";
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+            }).AddJwtBearer(options =>
+            {
+                options.Authority = domain;
+                options.Audience = Configuration["Auth0:ApiIdentifier"];
             });
         }
 
@@ -105,6 +121,9 @@ namespace open_life_server
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
                 c.RoutePrefix = string.Empty;
             });
+
+            // Auth0 Authentication/Authorization
+            app.UseAuthentication();
 
             app.UseHttpsRedirection();
             app.UseMvc();
